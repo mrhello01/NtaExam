@@ -93,32 +93,58 @@ plt.legend()
 plt.show()
 
 # Program7
-import pandas as pd, matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error
-X=fetch_california_housing(as_frame=True).frame[["AveRooms"]]
-y=fetch_california_housing(as_frame=True).target
-Xtr,Xte,ytr,yte=train_test_split(X,y,test_size=0.2)
-lr=LinearRegression().fit(Xtr,ytr)
-yp=lr.predict(Xte)
-plt.scatter(Xte,yte,color='red',label="Actual")
-plt.plot(Xte,yp,label="Linear")
-plt.legend()
-plt.show()
-print("LR MSE:",mean_squared_error(yte,yp))
-poly=PolynomialFeatures(2)
-Xtr_p=poly.fit_transform(Xtr)
-Xte_p=poly.transform(Xte)
-pr=LinearRegression().fit(Xtr_p,ytr)
-yp2=pr.predict(Xte_p)
-plt.scatter(Xte,yte,label="Actual")
-plt.scatter(Xte,yp2,label="Poly")
-plt.legend()
-plt.show()
-print("Poly MSE:",mean_squared_error(yte,yp2))
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import mean_squared_error, r2_score
+def linear_regression_california():
+    housing = fetch_california_housing(as_frame=True)
+    X = housing.data[["AveRooms"]] 
+    y = housing.target 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    plt.scatter(X_test, y_test, color="blue", label="Actual")
+    plt.plot(X_test, y_pred, color="red", label="Predicted")
+    plt.xlabel("Average number of rooms (AveRooms)")
+    plt.ylabel("Median value of homes ($100,000)")
+    plt.title("Linear Regression - California Housing Dataset")
+    plt.legend()
+    plt.show()
+    print("Linear Regression - California Housing Dataset")
+    print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    print("R^2 Score:", r2_score(y_test, y_pred))
+def polynomial_regression_auto_mpg():
+    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data"
+    column_names = ["mpg", "cylinders", "displacement", "horsepower", "weight", "acceleration", "model_year", "origin"]
+    data = pd.read_csv(url, sep='\s+', names=column_names, na_values="?")
+    data = data.dropna()
+    X = data["displacement"].values.reshape(-1, 1) 
+    y = data["mpg"].values
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    poly_model = make_pipeline(PolynomialFeatures(degree=2), StandardScaler(), LinearRegression())
+    poly_model.fit(X_train, y_train)
+    y_pred = poly_model.predict(X_test)
+    plt.scatter(X_test, y_test, color="blue", label="Actual")
+    plt.scatter(X_test, y_pred, color="red", label="Predicted")
+    plt.xlabel("Displacement")
+    plt.ylabel("Miles per gallon (mpg)")
+    plt.title("Polynomial Regression - Auto MPG Dataset")
+    plt.legend()
+    plt.show()
+    print("Polynomial Regression - Auto MPG Dataset")
+    print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+    print("R^2 Score:", r2_score(y_test, y_pred))
+if __name__ == "__main__":
+    print("Demonstrating Linear Regression and Polynomial Regression\n")
+    linear_regression_california()
+    polynomial_regression_auto_mpg()
 
 # Program8
 import matplotlib.pyplot as plt
