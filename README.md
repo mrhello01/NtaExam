@@ -46,18 +46,33 @@ plt.show()
 
 # Program4
 import pandas as pd
-df = pd.read_csv('training_data.csv')
-print("Training data:")
-print(df)
-h = ['?']*(df.shape[1]-1)
-for _, r in df.iterrows():
-    if r.iloc[-1] == 'Yes':
-        for i in range(len(h)):
-            if h[i] == '?' or h[i] == r.iloc[i]:
-                h[i] = r.iloc[i]
-            else:
-                h[i] = '?'
-print("\nThe final hypothesis is:", h)
+
+
+def find_s_algorithm(file_path):
+    data = pd.read_csv(file_path)
+
+    print("Training data:")
+    print(data)
+
+    attributes = data.columns[:-1]
+    class_label = data.columns[-1]
+
+    hypothesis = ['?' for _ in attributes]
+
+    for index, row in data.iterrows():
+        if row[class_label] == 'Yes':
+            for i, value in enumerate(row[attributes]):
+                if hypothesis[i] == '?' or hypothesis[i] == value:
+                    hypothesis[i] = value
+                else:
+                    hypothesis[i] = '?'
+
+    return hypothesis
+
+
+file_path = 'training_data.csv'
+hypothesis = find_s_algorithm(file_path)
+print("\nThe final hypothesis is:", hypothesis)
 
 # Program5
 import numpy as np, matplotlib.pyplot as plt
